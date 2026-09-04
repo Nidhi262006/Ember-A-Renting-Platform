@@ -6,6 +6,8 @@ module.exports.listingSchema = Joi.object ({
         description: Joi.string().required(),
         price: Joi.number().required(),
         location: Joi.string().required(),
+        country: Joi.string().allow("",null),
+        category: Joi.string().allow("",null),
         image: Joi.string().allow("",null)
     }).required()
 });
@@ -17,12 +19,10 @@ module.exports.reviewSchema = Joi.object ({
     }).required()
 });
 
-const validateListing = (req,res,next) => {
-    const{error}=module.exports.listingSchema.validate(req.body);
-    if(error){
-        returnres.send(error.details[0].message);
-    }
-    next();
-};
-
-module.exports = {validateListing};
+module.exports.bookingSchema = Joi.object ({
+    booking: Joi.object({
+        listing: Joi.string().hex().length(24).required(),
+        startDate: Joi.date().required(),
+        endDate: Joi.date().required(),
+    }).required()
+});

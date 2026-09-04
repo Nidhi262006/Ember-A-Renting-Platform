@@ -13,10 +13,12 @@ const ejsMate = require("ejs-mate");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
+const formatDate = require("./utils/formatDate");
 
 const listingRouter = require("./Routes/listing");
 const reviewRouter = require("./Routes/review");
 const userRouter = require("./Routes/user");
+const bookingRouter = require("./Routes/booking");
 
 mongoose.connect("mongodb://127.0.0.1:27017/majorproject")
   .then(() => console.log("DB Connected"))
@@ -55,11 +57,13 @@ app.use((req,res,next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
+  res.locals.formatDate = formatDate;
   next();
 });
 
 app.use("/listings",listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
+app.use("/bookings",bookingRouter);
 app.use("/",userRouter);
 
 app.use((err,req,res,next) => {

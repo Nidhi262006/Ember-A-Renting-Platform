@@ -19,6 +19,9 @@
     <div class="show-title"><%= listing.title %></div>
     <div class="show-meta">
       <span class="badge"><%= listing.category || 'Rental' %></span>
+      <span class="badge <%= listing.isAvailable ? 'badge-available' : 'badge-unavailable' %>">
+        <%= listing.isAvailable ? '✅ Available' : '🚫 Unavailable' %>
+      </span>
       <span>📍 <%= listing.location %>, <%= listing.country %></span>
       <span>⭐ 4.9 (27 reviews)</span>
     </div>
@@ -97,43 +100,73 @@
 
   <!-- RIGHT: BOOKING CARD -->
   <div>
+    <%
+      const isOwnListing = currUser && listing.owner && currUser._id.equals(listing.owner._id);
+      const today = new Date().toISOString().split("T")[0];
+    %>
     <div class="booking-card">
       <div class="big-price">
         ₹<%= listing.price.toLocaleString('en-IN') %> <span>/ day</span>
       </div>
 
-      <div class="form-group">
-        <label>From</label>
-        <input type="date" />
-      </div>
-      <div class="form-group">
-        <label>To</label>
-        <input type="date" />
-      </div>
-
-      <div style="background:#FFF7ED;border-radius:10px;padding:0.8rem;margin-bottom:1rem;font-size:0.85rem;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;">
-          <span>Rental price</span>
-          <span>₹<%= listing.price.toLocaleString('en-IN') %></span>
+      <% if (bookedRanges.length) { %>
+        <div class="booked-dates">
+          <strong>Already booked</strong>
+          <ul>
+            <% for (let booked of bookedRanges) { %>
+              <li><%= formatDate(booked.startDate) %> → <%= formatDate(booked.endDate) %></li>
+            <% } %>
+          </ul>
         </div>
-        <div style="display:flex;justify-content:space-between;color:#78716C;">
-          <span>Security deposit (refundable)</span>
-          <span>₹500</span>
-        </div>
-      </div>
+      <% } %>
 
-      <% if (currUser) { %>
-        <button class="btn-book">Book Now</button>
-      <% } else { %>
+      <% if (isOwnListing) { %>
+        <p class="booking-note">This is your own listing, so you can't book it.</p>
+      <% } else if (!listing.isAvailable) { %>
+        <p class="booking-note booking-note-off">
+          The owner has marked this item unavailable, so it can't be booked right now.
+        </p>
+      <% } else if (!currUser) { %>
         <a href="/login" class="btn-book" style="text-align:center;display:block;text-decoration:none;">
           Login to Book
         </a>
+      <% } else { %>
+        <form action="/bookings" method="POST">
+          <input type="hidden" name="booking[listing]" value="<%= listing._id %>"/>
+
+          <div class="form-group">
+            <label>From</label>
+            <input type="date" name="booking[startDate]" id="startDate" min="<%= today %>" required/>
+          </div>
+          <div class="form-group">
+            <label>To</label>
+            <input type="date" name="booking[endDate]" id="endDate" min="<%= today %>" required/>
+          </div>
+
+          <div class="booking-summary">
+            <div class="summary-row">
+              <span>₹<%= listing.price.toLocaleString('en-IN') %> × <span id="dayCount">0</span> day(s)</span>
+              <span id="rentalTotal">₹0</span>
+            </div>
+            <div class="summary-row muted">
+              <span>Security deposit (refundable)</span>
+              <span>₹500</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-book">Request to Book</button>
+        </form>
       <% } %>
 
       <a href="#" class="btn-outline">💬 Chat with Owner</a>
 
-      <% if (currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
+      <% if (isOwnListing) { %>
         <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #E7E5E4;">
+          <form action="/listings/<%= listing._id %>/availability" method="POST">
+            <button type="submit" class="btn-outline" style="margin-bottom:0.5rem;">
+              <%= listing.isAvailable ? '⏸ Pause Bookings' : '▶️ Allow Bookings' %>
+            </button>
+          </form>
           <a href="/listings/<%= listing._id %>/edit" class="btn-outline"
              style="margin-bottom:0.5rem;">✏️ Edit Listing</a>
           <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
@@ -147,3 +180,38 @@
     </div>
   </div>
 </div>
+
+<script>
+  (() => {
+    const startInput = document.getElementById("startDate");
+    const endInput = document.getElementById("endDate");
+    if (!startInput || !endInput) return;
+
+    const pricePerDay = <%= listing.price || 0 %>;
+    const dayCount = document.getElementById("dayCount");
+    const rentalTotal = document.getElementById("rentalTotal");
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    const updateEstimate = () => {
+      // The return date always has to land after the pick-up date.
+      if (startInput.value) {
+        const earliestReturn = new Date(startInput.value);
+        earliestReturn.setUTCDate(earliestReturn.getUTCDate() + 1);
+        endInput.min = earliestReturn.toISOString().split("T")[0];
+        if (endInput.value && endInput.value <= startInput.value) {
+          endInput.value = "";
+        }
+      }
+
+      const start = new Date(startInput.value);
+      const end = new Date(endInput.value);
+      const days = end > start ? Math.round((end - start) / MS_PER_DAY) : 0;
+
+      dayCount.textContent = days;
+      rentalTotal.textContent = "₹" + (days * pricePerDay).toLocaleString("en-IN");
+    };
+
+    startInput.addEventListener("change", updateEstimate);
+    endInput.addEventListener("change", updateEstimate);
+  })();
+</script>
