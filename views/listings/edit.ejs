@@ -13,7 +13,7 @@
       </div>
       <div class="form-group">
         <label>Description</label>
-        <textarea name="listing[description]" rows="4"><%= listing.description %></textarea>
+        <textarea name="listing[description]" rows="4" required><%= listing.description %></textarea>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
         <div class="form-group">
@@ -27,7 +27,7 @@
         </div>
         <div class="form-group">
           <label>Price per Day (₹)</label>
-          <input type="number" name="listing[price]" value="<%= listing.price %>" required/>
+          <input type="number" name="listing[price]" value="<%= listing.price %>" min="1" required/>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
@@ -41,10 +41,12 @@
         </div>
       </div>
       <div class="form-group">
-        <label>Current Image</label>
-        <img src="<%= listing.image.url %>" alt="current"
-             style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:0.5rem;"/>
-        <label>Replace Image</label>
+        <% if (originalImageUrl) { %>
+          <label>Current Image</label>
+          <img src="<%= originalImageUrl %>" alt="current"
+               style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:0.5rem;"/>
+        <% } %>
+        <label><%= originalImageUrl ? 'Replace Image' : 'Add an Image' %></label>
         <input type="file" name="listing[image]" accept="image/*"/>
       </div>
       <button type="submit" class="btn-book">💾 Save Changes</button>

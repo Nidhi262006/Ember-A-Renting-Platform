@@ -8,6 +8,8 @@
     <a href="/listings?category=Bikes">Categories</a>
 
     <% if (currUser) { %>
+      <a href="/bookings">My Bookings</a>
+      <a href="/bookings/requests">Requests</a>
       <a href="/listings/new" class="btn-primary">+ List Item</a>
       <a href="/logout">Logout</a>
     <% } else { %>
