@@ -965,3 +965,97 @@ i{
     align-items: flex-start;
   }
 }
+
+/* ERROR PAGE */
+.error-page {
+  max-width: 620px;
+  margin: 5rem auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.error-code {
+  font-size: 5.5rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--orange);
+  letter-spacing: -3px;
+}
+
+.error-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0.8rem 0 0.6rem;
+}
+
+.error-message {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--gray);
+  margin-bottom: 2rem;
+}
+
+.error-actions {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* .btn-book and .btn-outline are full-width by default; these sit side by side. */
+.error-action {
+  width: auto;
+  display: inline-block;
+  padding: 0.8rem 1.8rem;
+  margin-bottom: 0;
+  text-decoration: none;
+  text-align: center;
+}
+
+.error-details {
+  margin-top: 2.5rem;
+  text-align: left;
+  background: var(--light-gray);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--gray);
+}
+
+.error-details pre {
+  margin-top: 0.8rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #BE123C;
+}
+
+/* INLINE FIELD VALIDATION */
+.field-error {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #BE123C;
+}
+
+.form-group input.invalid,
+.form-group select.invalid,
+.form-group textarea.invalid {
+  border-color: #FECDD3;
+  background: #FFF1F2;
+}
+
+@media (max-width: 768px) {
+  .error-page { margin: 3rem auto; }
+  .error-code { font-size: 4rem; }
+  .error-title { font-size: 1.4rem; }
+}

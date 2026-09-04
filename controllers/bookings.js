@@ -46,6 +46,13 @@ module.exports.createBooking = async (req, res) => {
   const end = new Date(endDate);
   const listingUrl = `/listings/${listing._id}`;
 
+  // Joi coerces both date inputs, but a hand-rolled POST can still arrive with
+  // something unparseable, which would otherwise save NaN as the total price.
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    req.flash("error", "Please pick a valid start and return date");
+    return res.redirect(listingUrl);
+  }
+
   if (listing.owner && listing.owner.equals(req.user._id)) {
     req.flash("error", "You can't book your own listing");
     return res.redirect(listingUrl);

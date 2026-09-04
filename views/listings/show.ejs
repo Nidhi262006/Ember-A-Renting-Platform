@@ -1,10 +1,24 @@
 <% layout('layouts/boilerplate') %>
 
+<%
+  // Accounts created before `username` existed on the User model have only an
+  // email, and seeded listings have no owner at all, so reach for a name through
+  // fallbacks rather than dereferencing something that isn't there.
+  const displayName = (person, fallback) =>
+    (person && (person.username || person.email)) || fallback;
+  const initialOf = (person, fallback) =>
+    displayName(person, fallback).charAt(0).toUpperCase();
+  const imageUrl = (listing.image && listing.image.url)
+    || "https://placehold.co/800x600?text=No+Image";
+  const pricePerDay = listing.price || 0;
+  const booked = bookedRanges || [];
+%>
+
 <div style="max-width:1100px;margin:1rem auto;padding:0 2rem;">
   <nav style="font-size:0.85rem;color:#78716C;margin-bottom:1.5rem;">
     <a href="/listings" style="color:#F97316;text-decoration:none;">Home</a> › 
     <span><%= listing.category || 'Listings' %></span> › 
-    <span><%= listing.title %></span>
+    <span><%= listing.title || 'Untitled listing' %></span>
   </nav>
 </div>
 
@@ -12,33 +26,33 @@
   <!-- LEFT -->
   <div>
     <div class="show-images">
-      <img src="<%= listing.image.url %>" alt="<%= listing.title %>"
+      <img src="<%= imageUrl %>" alt="<%= listing.title || 'Listing photo' %>"
            onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'"/>
     </div>
 
-    <div class="show-title"><%= listing.title %></div>
+    <div class="show-title"><%= listing.title || 'Untitled listing' %></div>
     <div class="show-meta">
       <span class="badge"><%= listing.category || 'Rental' %></span>
       <span class="badge <%= listing.isAvailable ? 'badge-available' : 'badge-unavailable' %>">
         <%= listing.isAvailable ? '✅ Available' : '🚫 Unavailable' %>
       </span>
-      <span>📍 <%= listing.location %>, <%= listing.country %></span>
+      <span>📍 <%= [listing.location, listing.country].filter(Boolean).join(', ') || 'Location not set' %></span>
       <span>⭐ 4.9 (27 reviews)</span>
     </div>
 
     <% if (listing.owner) { %>
       <div style="display:flex;align-items:center;gap:0.8rem;padding:1rem;background:#F5F5F4;border-radius:12px;margin-bottom:1.5rem;">
         <div style="width:42px;height:42px;border-radius:50%;background:#F97316;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">
-          <%= listing.owner.username[0].toUpperCase() %>
+          <%= initialOf(listing.owner, 'Host') %>
         </div>
         <div>
-          <div style="font-weight:700;font-size:0.9rem;"><%= listing.owner.username %></div>
+          <div style="font-weight:700;font-size:0.9rem;"><%= displayName(listing.owner, 'Host') %></div>
           <div style="font-size:0.8rem;color:#78716C;">Member since 2023 · ⭐ 4.9</div>
         </div>
       </div>
     <% } %>
 
-    <p class="show-description"><%= listing.description %></p>
+    <p class="show-description"><%= listing.description || 'No description yet.' %></p>
 
     <!-- REVIEWS SECTION -->
     <div class="reviews-section">
@@ -66,17 +80,17 @@
   </div>
   <% } %>
 
-  <% if (listing.reviews.length > 0) { %>
+  <% if (listing.reviews && listing.reviews.length > 0) { %>
   <h4 style="margin:2rem 0 1rem;">Recent Feedbacks</h4>
   <div class="feedback-list">
     <% for (let review of listing.reviews) { %>
     <div class="feedback-card">
       <div class="feedback-avatar">
-        <%= review.author ? review.author.username.charAt(0).toUpperCase() : 'U' %>
+        <%= initialOf(review.author, 'User') %>
       </div>
       <div class="feedback-body">
         <div class="feedback-header">
-          <span class="feedback-name"><%= review.author ? review.author.username : 'User' %></span>
+          <span class="feedback-name"><%= displayName(review.author, 'User') %></span>
           <div class="feedback-stars">
             <% for (let i = 1; i <= 5; i++) { %>
               <span class="<%= i <= review.rating ? 'star filled' : 'star' %>">&#9733;</span>
@@ -106,15 +120,15 @@
     %>
     <div class="booking-card">
       <div class="big-price">
-        ₹<%= listing.price.toLocaleString('en-IN') %> <span>/ day</span>
+        ₹<%= pricePerDay.toLocaleString('en-IN') %> <span>/ day</span>
       </div>
 
-      <% if (bookedRanges.length) { %>
+      <% if (booked.length) { %>
         <div class="booked-dates">
           <strong>Already booked</strong>
           <ul>
-            <% for (let booked of bookedRanges) { %>
-              <li><%= formatDate(booked.startDate) %> → <%= formatDate(booked.endDate) %></li>
+            <% for (let range of booked) { %>
+              <li><%= formatDate(range.startDate) %> → <%= formatDate(range.endDate) %></li>
             <% } %>
           </ul>
         </div>
@@ -145,7 +159,7 @@
 
           <div class="booking-summary">
             <div class="summary-row">
-              <span>₹<%= listing.price.toLocaleString('en-IN') %> × <span id="dayCount">0</span> day(s)</span>
+              <span>₹<%= pricePerDay.toLocaleString('en-IN') %> × <span id="dayCount">0</span> day(s)</span>
               <span id="rentalTotal">₹0</span>
             </div>
             <div class="summary-row muted">
@@ -187,7 +201,7 @@
     const endInput = document.getElementById("endDate");
     if (!startInput || !endInput) return;
 
-    const pricePerDay = <%= listing.price || 0 %>;
+    const pricePerDay = <%= pricePerDay %>;
     const dayCount = document.getElementById("dayCount");
     const rentalTotal = document.getElementById("rentalTotal");
     const MS_PER_DAY = 1000 * 60 * 60 * 24;
