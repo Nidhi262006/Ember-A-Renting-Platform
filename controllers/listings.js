@@ -1,4 +1,5 @@
 const Listing = require("../models/listing");
+const Booking = require("../models/booking");
 
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
@@ -21,7 +22,14 @@ module.exports.showListing = async (req, res) => {
      req.flash("error","The listing you requested for does not exist");
      res.redirect("/listing");
   }
-  res.render("listings/show", { listing });
+  // Dates already promised to somebody else, so the booking card can say so
+  // before the visitor picks them.
+  const bookedRanges = await Booking.find({
+    listing: req.params.id,
+    status: "approved",
+    endDate: { $gte: new Date() },
+  }).sort({ startDate: 1 });
+  res.render("listings/show", { listing, bookedRanges });
 };
 
 module.exports.createListing = async (req,res,next) => {
@@ -72,4 +80,26 @@ module.exports.index = async (req, res) => {
   if (search) filter.title = { $regex: search, $options: 'i' };
   const allListings = await Listing.find(filter);
   res.render("listings/index", { allListings });
+};
+
+// Owner switch for pausing a listing, so nobody can book it while it is away
+// for repairs, lent out offline, etc.
+module.exports.toggleAvailability = async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+  if(!listing){
+    req.flash("error","The listing you requested for does not exist");
+    return res.redirect("/listings");
+  }
+  if(!listing.owner || !listing.owner.equals(req.user._id)){
+    req.flash("error","You don't have permission to change this listing");
+    return res.redirect(`/listings/${listing._id}`);
+  }
+
+  listing.isAvailable = !listing.isAvailable;
+  await listing.save();
+
+  req.flash("success", listing.isAvailable
+    ? "Listing is available for booking again."
+    : "Listing marked unavailable. Nobody can book it until you turn it back on.");
+  res.redirect(`/listings/${listing._id}`);
 };

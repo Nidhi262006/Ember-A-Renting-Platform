@@ -91,8 +91,13 @@
   <div class="listings-grid" id="listingsGrid">
     <% for (let listing of allListings) { %>
       <a href="/listings/<%= listing._id %>" class="listing-card">
-        <img src="<%= listing.image.url %>" alt="<%= listing.title %>"
-             onerror="this.src='https://placehold.co/400x300?text=No+Image'"/>
+        <div class="listing-card-media">
+          <img src="<%= listing.image.url %>" alt="<%= listing.title %>"
+               onerror="this.src='https://placehold.co/400x300?text=No+Image'"/>
+          <% if (listing.isAvailable === false) { %>
+            <span class="unavailable-ribbon">Unavailable</span>
+          <% } %>
+        </div>
         <div class="card-body">
           <h3><%= listing.title %></h3>
           <div class="card-location">

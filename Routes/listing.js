@@ -35,4 +35,7 @@ router.route("/:id")
 // EDIT
 router.get("/:id/edit", isLoggedIn,isOwner,wrapAsync(listingController.renderEditForm));
 
+// AVAILABILITY (owner pauses / resumes bookings on their listing)
+router.post("/:id/availability", isLoggedIn,wrapAsync(listingController.toggleAvailability));
+
 module.exports = router;
