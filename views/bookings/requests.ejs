@@ -1,0 +1,50 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="section">
+  <div class="section-header">
+    <h2>Booking Requests</h2>
+    <a href="/bookings">My bookings →</a>
+  </div>
+
+  <% if (!bookings.length) { %>
+    <div class="booking-empty">
+      <p>Nobody has requested one of your listings yet.</p>
+      <a href="/listings/new" class="btn-book booking-empty-cta">List an item</a>
+    </div>
+  <% } else { %>
+    <div class="booking-list">
+      <% for (let booking of bookings) { %>
+        <% const requester = (booking.user && (booking.user.username || booking.user.email)) || 'Someone'; %>
+        <div class="booking-row">
+          <div class="booking-avatar"><%= requester.charAt(0).toUpperCase() %></div>
+
+          <div class="booking-info">
+            <h3><%= requester %></h3>
+            <div class="booking-dates">
+              <% if (booking.listing) { %>
+                <a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a> ·
+              <% } %>
+              📅 <%= formatDate(booking.startDate) %> → <%= formatDate(booking.endDate) %>
+              · <%= booking.days %> day(s)
+            </div>
+            <div class="booking-total">₹<%= (booking.totalPrice || 0).toLocaleString('en-IN') %></div>
+          </div>
+
+          <div class="booking-actions">
+            <span class="status-pill status-<%= booking.status %>"><%= booking.status %></span>
+            <% if (booking.status === 'pending') { %>
+              <div class="booking-decision">
+                <form action="/bookings/<%= booking._id %>/approve" method="POST">
+                  <button type="submit" class="btn-approve">Approve</button>
+                </form>
+                <form action="/bookings/<%= booking._id %>/reject" method="POST">
+                  <button type="submit" class="btn-reject">Reject</button>
+                </form>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>
