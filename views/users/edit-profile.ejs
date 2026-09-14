@@ -1,0 +1,206 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="edit-profile-page">
+    <div class="edit-profile-container">
+
+        <div class="edit-profile-header">
+            <h1>Edit Profile</h1>
+            <p>Update your personal information</p>
+        </div>
+
+        <div class="edit-profile-card">
+
+            <form action="/profile?_method=PUT" method="POST">
+
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+
+                    <input
+                        type="text"
+                        id="fullName"
+                        name="fullName"
+                        value="<%= user.fullName || '' %>"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        value="<%= user.email %>"
+                        disabled
+                    >
+
+                    <small>
+                        Your email is used for login and cannot be changed here.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value="<%= user.phone || '' %>"
+                        placeholder="Enter your phone number"
+                        autocomplete="tel"
+                    >
+                </div>
+
+                <div class="form-actions">
+                    <a href="/profile" class="cancel-btn">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="save-btn">
+                        Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .edit-profile-page {
+        min-height: 75vh;
+        padding: 50px 20px;
+    }
+
+    .edit-profile-container {
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .edit-profile-header {
+        margin-bottom: 25px;
+    }
+
+    .edit-profile-header h1 {
+        margin: 0 0 7px;
+        font-size: 32px;
+    }
+
+    .edit-profile-header p {
+        margin: 0;
+        color: #777;
+    }
+
+    .edit-profile-card {
+        background: white;
+        padding: 30px;
+        border-radius: 18px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-group input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 13px 14px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+        border-color: #ff5a1f;
+        box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.1);
+    }
+
+    .form-group input:disabled {
+        background: #f5f5f5;
+        color: #777;
+        cursor: not-allowed;
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 7px;
+        color: #888;
+        font-size: 13px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .cancel-btn,
+    .save-btn {
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .cancel-btn {
+        background: #f2f2f2;
+        color: #333;
+    }
+
+    .cancel-btn:hover {
+        background: #e5e5e5;
+        color: #333;
+    }
+
+    .save-btn {
+        border: none;
+        background: #ff5a1f;
+        color: white;
+    }
+
+    .save-btn:hover {
+        background: #e94e17;
+    }
+
+    @media (max-width: 600px) {
+        .edit-profile-page {
+            padding: 30px 15px;
+        }
+
+        .edit-profile-card {
+            padding: 20px;
+        }
+
+        .edit-profile-header h1 {
+            font-size: 27px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .cancel-btn,
+        .save-btn {
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+    }
+</style>

@@ -1,0 +1,223 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="profile-page">
+    <div class="profile-container">
+
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <%= (user.fullName || user.email || "U").charAt(0).toUpperCase() %>
+            </div>
+
+            <div>
+                <h1>My Profile</h1>
+                <p>Manage your Ember account information</p>
+            </div>
+        </div>
+
+        <div class="profile-card">
+
+            <div class="profile-section">
+                <h2>Personal Information</h2>
+                <p class="section-description">
+                    Your basic profile information.
+                </p>
+            </div>
+
+            <div class="profile-info">
+
+                <div class="info-item">
+                    <span class="info-label">Full Name</span>
+                    <span class="info-value">
+                        <%= user.fullName || "Not added yet" %>
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">
+                        <%= user.email %>
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Phone Number</span>
+                    <span class="info-value">
+                        <%= user.phone || "Not added yet" %>
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="profile-actions">
+                <a href="/profile/edit" class="profile-edit-btn">
+                    ✏️ Edit Profile
+                </a>
+
+                <a href="/listings" class="profile-back-btn">
+                    Back to Listings
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .profile-page {
+        min-height: 75vh;
+        padding: 50px 20px;
+    }
+
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #ff5a1f;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .profile-header h1 {
+        margin: 0 0 5px;
+        font-size: 32px;
+    }
+
+    .profile-header p {
+        margin: 0;
+        color: #777;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-section {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+        margin-bottom: 5px;
+    }
+
+    .profile-section h2 {
+        margin: 0 0 5px;
+        font-size: 21px;
+    }
+
+    .section-description {
+        color: #777;
+        margin: 0;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 20px 5px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-label {
+        color: #777;
+        font-weight: 600;
+    }
+
+    .info-value {
+        color: #222;
+        font-weight: 500;
+        text-align: right;
+        word-break: break-word;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .profile-edit-btn,
+    .profile-back-btn {
+        display: inline-block;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .profile-edit-btn {
+        background: #ff5a1f;
+        color: white;
+    }
+
+    .profile-edit-btn:hover {
+        background: #e94e17;
+        color: white;
+    }
+
+    .profile-back-btn {
+        background: #f2f2f2;
+        color: #333;
+    }
+
+    .profile-back-btn:hover {
+        background: #e7e7e7;
+        color: #333;
+    }
+
+    @media (max-width: 600px) {
+        .profile-page {
+            padding: 30px 15px;
+        }
+
+        .profile-header h1 {
+            font-size: 26px;
+        }
+
+        .profile-card {
+            padding: 20px;
+        }
+
+        .info-item {
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .info-value {
+            text-align: left;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .profile-edit-btn,
+        .profile-back-btn {
+            text-align: center;
+        }
+    }
+</style>
+
