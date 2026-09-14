@@ -13,7 +13,7 @@
       <div class="form-group">
         <label>Description</label>
         <textarea name="listing[description]" rows="4"
-          placeholder="Describe your item, condition, what's included..."></textarea>
+          placeholder="Describe your item, condition, what's included..." required></textarea>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
         <div class="form-group">
@@ -31,7 +31,7 @@
         </div>
         <div class="form-group">
           <label>Price per Day (₹)</label>
-          <input type="number" name="listing[price]" placeholder="e.g. 800" required/>
+          <input type="number" name="listing[price]" placeholder="e.g. 800" min="1" required/>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
@@ -46,7 +46,7 @@
       </div>
       <div class="form-group">
         <label>Item Photo</label>
-        <input type="file" name="listing[image]" accept="image/*"/>
+        <input type="file" name="listing[image]" accept="image/*" required/>
       </div>
       <button type="submit" class="btn-book">🚀 Publish Listing</button>
     </form>

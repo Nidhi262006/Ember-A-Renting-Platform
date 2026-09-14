@@ -1,0 +1,54 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="section">
+  <div class="section-header">
+    <h2>My Bookings</h2>
+    <a href="/bookings/requests">Requests on my listings →</a>
+  </div>
+
+  <% if (!bookings.length) { %>
+    <div class="booking-empty">
+      <p>You haven't requested any rentals yet.</p>
+      <a href="/listings" class="btn-book booking-empty-cta">Browse rentals</a>
+    </div>
+  <% } else { %>
+    <div class="booking-list">
+      <% for (let booking of bookings) { %>
+        <div class="booking-row">
+          <% if (booking.listing) { %>
+            <img class="booking-thumb"
+                 src="<%= (booking.listing.image && booking.listing.image.url) || 'https://placehold.co/400x300?text=No+Image' %>"
+                 alt="<%= booking.listing.title %>"
+                 onerror="this.src='https://placehold.co/400x300?text=No+Image'"/>
+          <% } else { %>
+            <div class="booking-thumb"></div>
+          <% } %>
+
+          <div class="booking-info">
+            <h3>
+              <% if (booking.listing) { %>
+                <a href="/listings/<%= booking.listing._id %>"><%= booking.listing.title %></a>
+              <% } else { %>
+                Listing no longer available
+              <% } %>
+            </h3>
+            <div class="booking-dates">
+              📅 <%= formatDate(booking.startDate) %> → <%= formatDate(booking.endDate) %>
+              · <%= booking.days %> day(s)
+            </div>
+            <div class="booking-total">₹<%= (booking.totalPrice || 0).toLocaleString('en-IN') %></div>
+          </div>
+
+          <div class="booking-actions">
+            <span class="status-pill status-<%= booking.status %>"><%= booking.status %></span>
+            <% if (booking.status === 'pending' || booking.status === 'approved') { %>
+              <form action="/bookings/<%= booking._id %>/cancel" method="POST">
+                <button type="submit" class="btn-reject">Cancel</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>

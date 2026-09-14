@@ -1,4 +1,3 @@
-
 const User = require("../models/user");
 
 module.exports.renderSignupForm = (req, res) => {
@@ -111,4 +110,3 @@ module.exports.updateProfile = async (req, res) => {
 
     res.redirect("/profile");
 };
-
