@@ -80,6 +80,9 @@ app.use("/listings",listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
 app.use("/bookings",bookingRouter);
 app.use("/",userRouter);
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
 
 // Nothing matched. Handing it to the error handler below rather than answering
 // here means a 404 gets the same styled page as every other failure, instead of
